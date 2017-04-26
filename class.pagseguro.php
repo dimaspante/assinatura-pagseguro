@@ -1,28 +1,26 @@
 <?php
 Class pagSeguro {
-	
 	public function pay(){
-		
 		$url = 'https://ws.sandbox.pagseguro.uol.com.br/v2/pre-approvals/request';
 				
-		$data['email'] = 'SEUEMAIL';
-		$data['token'] = 'SEUTOKEN';
+		$data['email'] = 'EMAIL';
+		$data['token'] = 'TOKEN';
 		$data['currency'] = 'BRL';
 		
 		$data['preApprovalCharge'] = 'auto';
 		$data['preApprovalName'] = 'Assinatura';
-		$data['preApprovalAmountPerPayment'] = '79.00';
+		$data['preApprovalAmountPerPayment'] = '10.00';
 		$data['preApprovalPeriod'] = 'Monthly';
-		$data['preApprovalFinalDate'] = '2017-01-21T00:00:000-03:00';
-		$data['preApprovalMaxTotalAmount'] = '1200.00';
+		$data['preApprovalFinalDate'] = '2017-04-25T00:00:000-03:00';
+		$data['preApprovalMaxTotalAmount'] = '120.00';
 		
 		
 		$data['reference'] = 'REF1234';
 		$data['senderName'] = 'Jose Comprador';
 		$data['senderAreaCode'] = '11';
 		$data['senderPhone'] = '56273440';
-		$data['senderEmail'] = 'EMAILCOMPRADOR';
-		$data['redirectURL'] = 'LINKDEREDIRECT';
+		$data['senderEmail'] = 'COMPRADOR@SITE.COM.BR';
+		$data['redirectURL'] = 'HTTP://';
 		
 		$data = http_build_query($data);
 		
@@ -36,27 +34,17 @@ Class pagSeguro {
 		$xml= curl_exec($curl);
 		
 		if($xml == 'Unauthorized'){
-			//Insira seu código de prevenção a erros
-		
-			//header('Location: erro.php?tipo=autenticacao');
-			echo 'erro';
-			exit;//Mantenha essa linha
+			print 'Assinatura nao autorizada.';
+			exit(0);
 		}
 		curl_close($curl);
 		
 		$xml= simplexml_load_string($xml);
 		if(count($xml -> error) > 0){
-			//Insira seu código de tratamento de erro, talvez seja útil enviar os códigos de erros.
-		
-			//header('Location: erro.php?tipo=dadosInvalidos');
+			print 'Erro:<pre>';
 			print_r($xml);
-			echo 'dados invalidos';
-			exit;
+			exit(0);
 		}
-		header('Location: https://sandbox.pagseguro.uol.com.br/v2/pre-approvals/request.html?code=' . $xml -> code);
+		header('Location: https://sandbox.pagseguro.uol.com.br/v2/pre-approvals/request.html?code='.$xml->code);
 	}
 }
-
-$ps = new pagSeguro();
-echo $ps->pay();
-?>
